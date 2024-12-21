@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Admin Dashboard</title>
+    <link rel="stylesheet" href="../CSS/styles.css">
+</head>
+<body>
+    <header>
+        <h1>System Admin Dashboard</h1>
+    </header>
+
+    <nav>
+        <a href="system_admin.html">Home</a>
+        <a href="../backend/user_management.html">User Management</a>
+        <a href="system_monitoring.html">System Monitoring</a>
+        <a href="audit_logs.html">Sensor Logs</a>
+        <a href="../backend/login.html">Log Out</a>
+    </nav>
+
+    <div class="container">
+        <h2>System Admin Functions</h2>
+        <p>Manage users, configure system settings, and monitor system performance from here:</p>
+
+        <div class="card-wrapper">
+            <div class="card">
+                <h3>User Management</h3>
+                <button class="button" onclick="window.location.href='../backend/user_management.html'">Go to User Management</button>
+            </div>
+
+            <div class="card">
+                <h3>System Monitoring</h3>
+                <button class="button" onclick="window.location.href='system_monitoring.html'">Go to System Monitoring</button>
+            </div>
+
+            <div class="card">
+                <h3>Sensor Logs</h3>
+                <button class="button" onclick="window.location.href='audit_logs.html'">Go to Sensor Logs</button>
+            </div>
+    </div>
+</body>
+</html>
