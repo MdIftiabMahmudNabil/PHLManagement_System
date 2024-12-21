@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storage Conditions Monitoring</title>
+    <link rel="stylesheet" href="../CSS/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Storage Conditions Monitoring</h1>
+    </header>
+
+    <nav>
+        <a href="storage_manager.html">Home</a>
+        <a href="storage_conditions.html">Storage Conditions Monitoring</a>
+        <a href="../backend/batch_allocations.php">Batch Allocations</a>
+        <a href="report_storage_issue.html">Report Issue</a>
+        <a href="view_storage_loss_report.html">Loss Report</a>
+        <a href="../backend/login.html">Log Out</a>
+    </nav>
+
+    <div class="container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Condition</th>
+                    <th>Actions</th>
+                    <th>Current Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Temperature</td>
+                    <td>
+                        <button onclick="adjustTemperature('decrease')">-</button>
+                        <span class="value-display" id="temp-value">22</span>°C
+                        <button onclick="adjustTemperature('increase')">+</button>
+                    </td>
+                    <td><span id="temp-status">Normal</span></td>
+                </tr>
+                <tr>
+                    <td>Humidity</td>
+                    <td>
+                        <button onclick="adjustHumidity('decrease')">-</button>
+                        <span class="value-display" id="humidity-value">55</span>%
+                        <button onclick="adjustHumidity('increase')">+</button>
+                    </td>
+                    <td><span id="humidity-status">Normal</span></td>
+                </tr>
+                <tr>
+                    <td>Light</td>
+                    <td>
+                        <button onclick="adjustLight('decrease')">-</button>
+                        <span class="value-display" id="light-value">300</span> lux
+                        <button onclick="adjustLight('increase')">+</button>
+                    </td>
+                    <td><span id="light-status">Normal</span></td>
+                </tr>
+                <tr>
+                    <td>Timestamp</td>
+                    <td colspan="2"><span id="timestamp"></span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function updateTimestamp() {
+            const timestampElement = document.getElementById("timestamp");
+            const now = new Date();
+            timestampElement.innerText = now.toLocaleString();
+        }
+
+        function adjustTemperature(action) {
+            const tempValue = document.getElementById("temp-value");
+            const tempStatus = document.getElementById("temp-status");
+            let currentTemp = parseInt(tempValue.innerText);
+
+            if (action === 'increase') {
+                currentTemp++;
+            } else if (action === 'decrease') {
+                currentTemp--;
+            }
+
+            tempValue.innerText = currentTemp;
+
+            if (currentTemp < 18) {
+                tempStatus.innerText = "Too Cold";
+                tempStatus.style.color = "blue";
+            } else if (currentTemp > 28) {
+                tempStatus.innerText = "Too Hot";
+                tempStatus.style.color = "red";
+            } else {
+                tempStatus.innerText = "Normal";
+                tempStatus.style.color = "green";
+            }
+        }
+
+        function adjustHumidity(action) {
+            const humidityValue = document.getElementById("humidity-value");
+            const humidityStatus = document.getElementById("humidity-status");
+            let currentHumidity = parseInt(humidityValue.innerText);
+
+            if (action === 'increase') {
+                currentHumidity++;
+            } else if (action === 'decrease') {
+                currentHumidity--;
+            }
+
+            humidityValue.innerText = currentHumidity;
+
+            if (currentHumidity < 30) {
+                humidityStatus.innerText = "Too Dry";
+                humidityStatus.style.color = "blue";
+            } else if (currentHumidity > 70) {
+                humidityStatus.innerText = "Too Humid";
+                humidityStatus.style.color = "red";
+            } else {
+                humidityStatus.innerText = "Normal";
+                humidityStatus.style.color = "green";
+            }
+        }
+
+        function adjustLight(action) {
+            const lightValue = document.getElementById("light-value");
+            const lightStatus = document.getElementById("light-status");
+            let currentLight = parseInt(lightValue.innerText);
+
+            if (action === 'increase') {
+                currentLight += 10;
+            } else if (action === 'decrease') {
+                currentLight -= 10;
+            }
+
+            lightValue.innerText = currentLight;
+
+            if (currentLight < 200) {
+                lightStatus.innerText = "Too Dim";
+                lightStatus.style.color = "blue";
+            } else if (currentLight > 600) {
+                lightStatus.innerText = "Too Bright";
+                lightStatus.style.color = "red";
+            } else {
+                lightStatus.innerText = "Normal";
+                lightStatus.style.color = "green";
+            }
+        }
+
+        window.onload = function () {
+            updateTimestamp();
+            setInterval(updateTimestamp, 1000);
+    </script>
+</body>
+</html>
