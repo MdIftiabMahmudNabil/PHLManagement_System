@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Report</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Generate Report</h1>
+    </header>
+    <nav>
+        <a href="agricultural_officer.html">Home</a>
+        <a href="inspect_batch.html">Inspect Harvest Batch</a>
+        <a href="list_of_farms.html">List of Farms</a>
+        <a href="generate_report.html">Generate Report</a>
+        <a href="../backend/login.html">Log Out</a>
+    </nav>
+
+    <div class="container">
+
+        <h2>Enter Batch ID</h2>
+        <form id="report-form">
+            <label for="batchID">Batch ID:</label>
+            <input type="text" id="batchID" name="batchID" required>
+            <button type="submit">Generate Report</button>
+        </form>
+
+
+        <div id="report-section" style="display: none;">
+            <h2>Batch Report</h2>
+            <table id="report-table" border="1" style="width: 100%; border-collapse: collapse; text-align: left;">
+                <tr>
+                    <th>Batch ID</th>
+                    <td id="report-batchID"></td>
+                </tr>
+                <tr>
+                    <th>Total Loss</th>
+                    <td id="report-totalLoss"></td>
+                </tr>
+                <tr>
+                    <th>Stage with Most Loss</th>
+                    <td id="report-stage"></td>
+                </tr>
+                <tr>
+                    <th>Actions Taken</th>
+                    <td id="report-actions"></td>
+                </tr>
+            </table>
+
+            <button id="download-pdf">Download PDF</button>
+            <button id="download-doc">Download Word</button>
+        </div>
+    </div>
+
+    <script>
+
+        document.getElementById('report-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const batchID = document.getElementById('batchID').value;
+
+            try {
+                const response = await fetch('../backend/fetch_batch_report.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `batchID=${encodeURIComponent(batchID)}`
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                document.getElementById('report-batchID').textContent = data.batchID;
+                document.getElementById('report-totalLoss').textContent = data.totalLoss;
+                document.getElementById('report-stage').textContent = data.stageWithMostLoss;
+                document.getElementById('report-actions').textContent = data.actionsTaken;
+
+                document.getElementById('report-section').style.display = 'block';
+            } catch (error) {
+                console.error('Error fetching batch report:', error);
+            }
+        });
+
+        document.getElementById('download-pdf').addEventListener('click', () => {
+            const reportContent = document.getElementById('report-section').innerHTML;
+            const blob = new Blob([reportContent], { type: 'application/pdf' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'Batch_Report.pdf';
+            link.click();
+        });
+
+        document.getElementById('download-doc').addEventListener('click', () => {
+            const reportContent = document.getElementById('report-section').innerHTML;
+            const blob = new Blob([reportContent], { type: 'application/msword' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'Batch_Report.doc';
+            link.click();
+        });
+    </script>
+</body>
+</html>

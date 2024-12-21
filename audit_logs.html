@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Logs</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>System Logs</h1>
+    </header>
+    <nav>
+        <a href="system_admin.html">Home</a>
+        <a href="/Backend/user_management.html">User Management</a>
+        <a href="system_monitoring.html">System Monitoring</a>
+        <a href="audit_logs.html">Sensor Logs</a>
+        <a href="../backend/login.html">Log Out</a>
+    </nav>
+
+    <div class="container">
+        <h2>Sensor Readings</h2>
+        <table id="sensor-log">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Temperature (°C)</th>
+                    <th>Humidity (%)</th>
+                    <th>Light</th>
+                    <th>Motion</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+
+        async function fetchSensorReadings() {
+            try {
+                const response = await fetch('../backend/fetch_sensor_data.php'); 
+                const data = await response.json();
+
+                const tableBody = document.querySelector('#sensor-log tbody');
+                tableBody.innerHTML = ''; 
+
+                if (data.length === 0) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td colspan="5" style="text-align:center;">No sensor data available</td>`;
+                    tableBody.appendChild(row);
+                }
+
+                data.forEach(reading => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${reading.timestamp}</td>
+                        <td>${reading.temperature}</td>
+                        <td>${reading.humidity}</td>
+                        <td>${reading.light}</td>
+                        <td>${reading.motion}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching sensor data:', error);
+
+
+                const tableBody = document.querySelector('#sensor-log tbody');
+                const row = document.createElement('tr');
+                row.innerHTML = `<td colspan="5" style="text-align:center;color:red;">Error loading sensor data</td>`;
+                tableBody.appendChild(row);
+            }
+        }
+
+
+        window.onload = fetchSensorReadings;
+    </script>
+</body>
+</html>

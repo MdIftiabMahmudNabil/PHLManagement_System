@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Monitoring</title>
+    <link rel="stylesheet" href="../CSS/styles.css">
+</head>
+<body>
+    <header>
+        <h1>System Monitoring</h1>
+    </header>
+    <nav>
+        <a href="system_admin.html">Home</a>
+        <a href="../backend/user_management.html">User Management</a>
+        <a href="system_monitoring.html">System Monitoring</a>
+        <a href="audit_logs.html">Sensor Logs</a>
+        <a href="../backend/login.html">Log Out</a>
+    </nav>
+
+    <div class="container">
+
+        <h2>System Performance Track</h2>
+        <div class="chart-container">
+            <canvas id="performanceMetricsChart"></canvas>
+        </div>
+
+        <h2>Current System Health</h2>
+        <div class="chart-container">
+            <canvas id="healthMetricsChart"></canvas>
+        </div>
+
+
+        <div class="alerts">
+            <div class="alert green">
+                <strong>Alert:</strong> CPU usage is normal.
+            </div>
+            <div class="alert">
+                <strong>Alert:</strong> Memory usage is high (90%).
+            </div>
+            <div class="alert">
+                <strong>Alert:</strong> System load is critical. Immediate attention required!
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+
+        const performanceMetricsData = {
+            labels: ['10:00', '10:30', '11:00', '11:30', '12:00', '12:30'], 
+            datasets: [
+                {
+                    label: 'CPU Usage (%)',
+                    data: [30, 40, 50, 60, 70, 80], 
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderWidth: 2,
+                },
+                {
+                    label: 'Memory Usage (%)',
+                    data: [50, 55, 60, 65, 75, 85], 
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderWidth: 2,
+                },
+                {
+                    label: 'System Load (%)',
+                    data: [40, 50, 60, 70, 80, 90], 
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                    borderWidth: 2,
+                },
+            ],
+        };
+
+        const performanceCtx = document.getElementById('performanceMetricsChart').getContext('2d');
+        const performanceMetricsChart = new Chart(performanceCtx, {
+            type: 'line',
+            data: performanceMetricsData,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                    },
+                },
+            },
+        });
+
+
+        const healthMetricsData = {
+            labels: ['CPU Usage', 'Memory Usage', 'Free Resources'],
+            datasets: [
+                {
+                    label: 'System Health',
+                    data: [70, 85, 45], 
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.8)',
+                        'rgba(255, 99, 132, 0.8)',
+                        'rgba(153, 102, 255, 0.8)',
+                    ],
+                    borderColor: [
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(153, 102, 255, 1)',
+                    ],
+                    borderWidth: 1,
+                },
+            ],
+        };
+
+        const healthCtx = document.getElementById('healthMetricsChart').getContext('2d');
+        const healthMetricsChart = new Chart(healthCtx, {
+            type: 'pie',
+            data: healthMetricsData,
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+    <style>
+        /* General Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: url('image Background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .signup-container {
+            display: flex;
+            width: 700px; /* Reduced the width */
+            background-color: white;
+            border-radius: 50px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .left-section {
+            flex: 1;
+            background: url('image 1.jpg') no-repeat center center;
+            background-size: cover;
+        }
+
+        .form-section {
+            flex: 1;
+            padding: 30px; /* Reduced padding */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-section img.logo {
+            width: 50px; /* Reduced size */
+            height: 50px;
+            border-radius: 50%;
+            margin: 0 auto 10px; /* Reduced margin */
+        }
+
+        .form-section h2 {
+            text-align: center;
+            margin-bottom: 15px; /* Reduced margin */
+            color: #333;
+        }
+
+        .form-section form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px; /* Reduced gap */
+        }
+
+        .form-section input, .form-section select {
+            width: 100%;
+            padding: 8px; /* Reduced padding */
+            font-size: 14px; /* Reduced font size */
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .form-section input[type="submit"] {
+            background-color: #295135;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .form-section input[type="submit"]:hover {
+            background-color: #9fcc2e; /* Light green hover effect */
+        }
+
+        .back-to-login {
+            margin-top: 15px; /* Reduced margin */
+            text-align: center;
+            font-size: 12px; /* Reduced font size */
+        }
+
+        .back-to-login a {
+            color: #295135;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-to-login a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <!-- Left Image Section -->
+        <div class="left-section"></div>
+
+        <!-- Form Section -->
+        <div class="form-section">
+            <img src="PRESERVIO LOGO.png" alt="Preservio Logo" class="logo">
+            <h2>SIGNUP</h2>
+            <form id="signup-form">
+                <input type="text" name="username" placeholder="Username" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <select name="userType" required>
+                    <option value="" disabled selected>Select User Type</option>
+                    <option value="Administrator">Administrator</option>
+                    <option value="Agricultural Officer">Agricultural Officer</option>
+                    <option value="Storage Manager">Storage Manager</option>
+                    <option value="Transport Manager">Transport Manager</option>
+                    <option value="Factory Manager">Factory Manager</option>
+                    <option value="Shipment Manager">Shipment Manager</option>
+                    <option value="Retail Shop Owner">Retail Shop Owner</option>
+                    <option value="System Admin">System Admin</option>
+                </select>
+                <input type="tel" name="phone" placeholder="Phone" required>
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="text" name="city" placeholder="City" required>
+                <input type="text" name="division" placeholder="Division" required>
+                <input type="text" name="zip" placeholder="Zip Code" required>
+                <input type="submit" value="Register">
+            </form>
+            
+            <div class="back-to-login">
+                <p>Done Registration!! <a href="login.html">Let's go back to Login</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Handle Signup Form Submission
+        document.querySelector('#signup-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            fetch('create_user.php', {
+                method: 'POST',
+                body: new FormData(this),
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+                document.querySelector('#signup-form').reset(); // Reset the form on success
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
+        });
+    </script>
+</body>
+</html>

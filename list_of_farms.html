@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List of Farms</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>List of Farms</h1>
+    </header>
+    <nav>
+        <a href="agricultural_officer.html">Home</a>
+        <a href="inspect_batch.html">Inspect Harvest Batch</a>
+        <a href="list_of_farms.html">List of Farms</a>
+        <a href="generate_report.html">Generate Report</a>
+        <a href="../backend/login.html">Log Out</a>
+    </nav>
+
+    <div class="container">
+        <h2>Farm Details</h2>
+        <table id="farm-table">
+            <thead>
+                <tr>
+                    <th>Farm ID</th>
+                    <th>Name</th>
+                    <th>Owner</th>
+                    <th>Size</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>City</th>
+                    <th>Division</th>
+                    <th>Zipcode</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        async function fetchFarms() {
+            try {
+                const response = await fetch('../backend/fetch_farms.php'); 
+                const farms = await response.json();
+
+                const tableBody = document.querySelector('#farm-table tbody');
+                tableBody.innerHTML = ''; 
+
+                farms.forEach(farm => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${farm.farmID}</td>
+                        <td>${farm.name}</td>
+                        <td>${farm.ownername}</td>
+                        <td>${farm.sizeoffarm}</td>
+                        <td>${farm.phone}</td>
+                        <td>${farm.email}</td>
+                        <td>${farm.city}</td>
+                        <td>${farm.division}</td>
+                        <td>${farm.zipcode}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching farms:', error);
+            }
+        }
+
+
+        window.onload = fetchFarms;
+    </script>
+</body>
+</html>

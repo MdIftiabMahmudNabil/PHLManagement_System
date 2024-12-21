@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        /* General Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: url('image Background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            width: 400px;
+            text-align: center;
+        }
+
+        .login-container img.logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        form input, form select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        form select {
+            color: #666;
+        }
+
+        form input[type="submit"] {
+            background-color: #295135;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        form input[type="submit"]:hover {
+            background-color: #9fcc2e; /* Light green hover effect */
+        }
+
+        .social-login {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .social-login button {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border: none;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .social-login .google {
+            background-color: #DB4437; /* Google Red */
+        }
+
+        .social-login .facebook {
+            background-color: #4267B2; /* Facebook Blue */
+        }
+
+        .social-login .twitter {
+            background-color: white;
+            color: black;
+            border: 1px solid #000;
+        }
+
+        .social-login img {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .footer a {
+            color: #295135;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <img src="PRESERVIO LOGO.png" alt="Preservio Logo" class="logo">
+        <h2>Login</h2>
+        <form>
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <select name="role" required>
+                <option value="" disabled selected>Select User Type</option>
+                <option value="../frontend/admin_dashboard.html">Administrator</option>
+                <option value="../frontend/agricultural_officer.html">Agricultural Officer</option>
+                <option value="../frontend/storage_manager.html">Storage Manager</option>
+                <option value="../frontend/storage_manager.html">Shipment Manager</option>
+                <option value="../frontend/factory_manager.html">Factory Manager</option>
+                <option value="../frontend/transport_manager.html">Transport Manager</option>
+                <option value="../frontend/system_admin.html">System Admin</option>
+            </select>
+            <input type="submit" value="Login" onclick="this.form.action=document.querySelector('select[name=role]').value;">
+        </form>
+        <div class="social-login">
+            <button class="google">
+                <img src="google-icon.png" alt="Google"> Continue with Google
+            </button>
+            <button class="facebook">
+                <img src="facebook-icon.png" alt="Facebook"> Continue with Facebook
+            </button>
+            <button class="twitter">
+                <img src="twitter-icon.png" alt="Twitter"> Continue with X
+            </button>
+        </div>
+        <div class="footer">
+            <p>Don't have an account? <a href="signup.html">Sign up</a></p>
+        </div>
+    </div>
+</body>
+</html>
