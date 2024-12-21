@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retail Shop Owner Dashboard</title>
+    <link rel="stylesheet" href="../CSS/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Retail Shop Owner Dashboard</h1>
+    </header>
+    <nav>
+        <a href="home.html">Home</a>
+        <a href="retail_shop_owner.html">My Shipments</a>
+        <a href="../backend/login.html">Log Out</a>
+    </nav>
+
+    <div class="container">
+   
+        <h2>Incoming Shipments</h2>
+        <table id="incoming-shipments">
+            <thead>
+                <tr>
+                    <th>Shop Shipment ID</th>
+                    <th>Shipment ID</th>
+                    <th>Delivery Time</th>
+                    <th>Actions</th>
+                    <th>Feedback</th>
+                    <th>Confirm</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+
+        <h2>Shipment History</h2>
+        <table id="shipment-history">
+            <thead>
+                <tr>
+                    <th>Shipment ID</th>
+                    <th>Retail Shop ID</th>
+                    <th>Status</th>
+                    <th>Delivery Time</th>
+                    <th>Actions</th>
+                    <th>Feedback</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+
+        async function loadIncomingShipments() {
+            try {
+                const response = await fetch('../backend/fetch_incoming_shipments.php');
+                const data = await response.json();
+
+                const incomingTableBody = document.querySelector('#incoming-shipments tbody');
+                incomingTableBody.innerHTML = '';
+
+                data.forEach((shipment) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${shipment.shopShipmentID}</td>
+                        <td>${shipment.shipmentID}</td>
+                        <td>${shipment.deliveryTime}</td>
+                        <td>${shipment.actions || ''}</td>
+                        <td>${shipment.feedback || ''}</td>
+                        <td>
+                            <button onclick="confirmShipment('${shipment.shopShipmentID}')">Confirm</button>
+                        </td>
+                    `;
+                    incomingTableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error loading incoming shipments:', error);
+            }
+        }
+
+  
+        async function loadShipmentHistory() {
+            try {
+                const response = await fetch('../backend/fetch_shipment_history.php');
+                const data = await response.json();
+
+                const historyTableBody = document.querySelector('#shipment-history tbody');
+                historyTableBody.innerHTML = '';
+
+                data.forEach((shipment) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${shipment.shipmentID}</td>
+                        <td>${shipment.retailShopID}</td>
+                        <td>${shipment.status}</td>
+                        <td>${shipment.deliveryTime}</td>
+                        <td>${shipment.actions || ''}</td>
+                        <td>${shipment.feedback || ''}</td>
+                    `;
+                    historyTableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error loading shipment history:', error);
+            }
+        }
+
+
+        async function confirmShipment(shopShipmentID) {
+            const feedback = prompt('Enter feedback for this shipment (optional):');
+            const data = { shopShipmentID, feedback };
+
+            try {
+                const response = await fetch('../backend/confirm_shipment.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('Shipment confirmed successfully!');
+                    loadIncomingShipments();
+                    loadShipmentHistory();
+                } else {
+                    alert('Failed to confirm shipment.');
+                }
+            } catch (error) {
+                console.error('Error confirming shipment:', error);
+            }
+        }
+
+        // Load data on page load
+        window.onload = function () {
+            loadIncomingShipments();
+            loadShipmentHistory();
+        };
+    </script>
+</body>
+</html>
