@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storage Loss Report</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>View Storage Loss Report</h1>
+    </header>
+
+    <nav>
+        <a href="storage_manager.html">Home</a>
+        <a href="storage_conditions.html">Storage Conditions Monitoring</a>
+        <a href="../backend/batch_allocations.php">Batch Allocations</a>
+        <a href="report_storage_issue.html">Report Issue</a>
+        <a href="view_storage_loss_report.html">Loss Report</a>
+        <a href="../backend/login.html">Log Out</a>
+    </nav>
+    <div class="container">
+        <form id="lossReportForm">
+            <label for="batchID">Batch ID:</label>
+            <input type="text" id="batchID" name="batchID" required>
+            <button type="submit">Generate Report</button>
+        </form>
+        <br>
+
+        <h2>Loss Report</h2>
+        <table id="lossReportTable" border="1">
+            <thead>
+                <tr>
+                    <th>Batch ID</th>
+                    <th>Loss Amount</th>
+                    <th>Cause of Loss</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+        <br>
+
+        <button id="downloadPDF">Download as PDF</button>
+        <button id="downloadDOC">Download as DOC</button>
+    </div>
+
+    <script>
+        document.getElementById('lossReportForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const batchID = document.getElementById('batchID').value;
+            try {
+                const response = await fetch(`../backend/fetch_storage_loss_report.php?batchID=${batchID}`);
+                const data = await response.json();
+
+                const tableBody = document.querySelector('#lossReportTable tbody');
+                tableBody.innerHTML = '';
+
+                if (data.error) {
+                    alert(data.error); 
+                    return;
+                }
+
+                data.forEach(loss => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${loss.batchID}</td>
+                        <td>${loss.lossAmount}</td>
+                        <td>${loss.lossCause ? loss.lossCause : 'No issue reported'}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching loss report:', error);
+                alert('An error occurred while fetching the loss report.');
+            }
+        });
+
+
+        document.getElementById('downloadPDF').addEventListener('click', () => {
+            window.location.href = '../backend/download_storage_loss_report.php?format=pdf';
+        });
+
+        document.getElementById('downloadDOC').addEventListener('click', () => {
+            window.location.href = '../backend/download_storage_loss_report.php?format=doc';
+        });
+    </script>
+</body>
+</html>
