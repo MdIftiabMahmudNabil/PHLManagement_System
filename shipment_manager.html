@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shipment Manager</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Shipment Manager</h1>
+    </header>
+    <nav>
+        <a href="shipment_manager.html">Home</a>
+        <a href="shipment_manager.html">Track Shipment & Status</a>
+        <a href="report_shipment_issue.html">Report Issue</a>
+        <a href="../backend/login.html">Log Out</a>
+    </nav>
+
+    <div class="container">
+        <section>
+            <h2>Initiate Shipment</h2>
+            <form id="initiateShipmentForm">
+                <label for="shipmentID">Shipment ID:</label>
+                <input type="text" id="shipmentID" name="shipmentID" required>
+
+                <label for="transportID">Transport ID:</label>
+                <input type="text" id="transportID" name="transportID" required>
+
+                <label for="retailShopID">Retail Shop ID:</label>
+                <input type="text" id="retailShopID" name="retailShopID" required>
+
+                <label for="shipmentDate">Shipment Date:</label>
+                <input type="date" id="shipmentDate" name="shipmentDate" required>
+
+                <label for="deliveryDate">Delivery Date:</label>
+                <input type="date" id="deliveryDate" name="deliveryDate" required>
+
+                <label for="loadAmount">Load Amount:</label>
+                <input type="number" id="loadAmount" name="loadAmount" required>
+
+                <label for="loadTime">Load Timestamp:</label>
+                <input type="datetime-local" id="loadTime" name="loadTime" required>
+
+                <label for="unloadAmount">Unload Amount:</label>
+                <input type="number" id="unloadAmount" name="unloadAmount">
+
+                <label for="unloadTime">Unload Timestamp:</label>
+                <input type="datetime-local" id="unloadTime">
+
+                <button type="submit">Initiate Shipment</button>
+            </form>
+        </section>
+
+
+        <section>
+            <h2>Shipment Status</h2>
+            <table id="shipmentStatusTable" border="1">
+                <thead>
+                    <tr>
+                        <th>Shipment ID</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <script>
+
+        document.getElementById('initiateShipmentForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+
+            try {
+                const response = await fetch('../backend/submit_shipment.php', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const result = await response.json();
+                alert(result.message || 'Shipment initiated successfully');
+                if (result.success) {
+                    this.reset();
+                    fetchShipmentStatus();
+                }
+            } catch (error) {
+                console.error('Error initiating shipment:', error);
+                alert('An error occurred while initiating the shipment.');
+            }
+        });
+
+        async function fetchShipmentStatus() {
+            try {
+                const response = await fetch('../backend/fetch_shipment_status.php');
+                const data = await response.json();
+
+                const tableBody = document.querySelector('#shipmentStatusTable tbody');
+                tableBody.innerHTML = ''; 
+
+                if (data.error) {
+                    alert(data.error); 
+                    return;
+                }
+
+                data.forEach(shipment => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${shipment.shipmentID}</td>
+                        <td>${shipment.status}</td>
+                        <td>
+                            <button onclick="updateShipmentStatus('${shipment.shipmentID}', 'In Transit')">Start Transport</button>
+                            <button onclick="trackShipment('${shipment.shipmentID}')">Track</button>
+                            <button onclick="updateShipmentStatus('${shipment.shipmentID}', 'Completed')">Finish</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching shipment status:', error);
+                alert('An error occurred while fetching shipment statuses.');
+            }
+        }
+
+
+        async function updateShipmentStatus(shipmentID, newStatus) {
+            try {
+                const response = await fetch('../backend/update_shipment_status.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ shipmentID, newStatus }),
+                });
+
+                const result = await response.json();
+                alert(result.message || 'Status updated successfully');
+                if (result.success) {
+                    fetchShipmentStatus();
+                }
+            } catch (error) {
+                console.error('Error updating shipment status:', error);
+                alert('An error occurred while updating shipment status.');
+            }
+        }
+
+
+        window.onload = fetchShipmentStatus;
+    </script>
+</body>
+</html>
