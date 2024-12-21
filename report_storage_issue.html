@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Storage Issue</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Report Storage Issue</h1>
+    </header>
+
+    <nav>
+        <a href="storage_manager.html">Home</a>
+        <a href="storage_conditions.html">Storage Conditions Monitoring</a>
+        <a href="../backend/batch_allocations.php">Batch Allocations</a>
+        <a href="report_storage_issue.html">Report Issue</a>
+        <a href="view_storage_loss_report.html">Loss Report</a>
+        <a href="../backend/login.html">Log Out</a>
+    </nav>
+
+    <div class="container">
+        <section>
+            <h2>Report Issue</h2>
+            <form id="reportStorageIssueForm">
+                <label for="batchID">Batch ID:</label>
+                <input type="text" id="batchID" name="batchID" required>
+
+                <label for="issueStartTime">Issue Start Time:</label>
+                <input type="datetime-local" id="issueStartTime" name="issueStartTime" required>
+
+                <label for="issueEndTime">Issue End Time:</label>
+                <input type="datetime-local" id="issueEndTime" name="issueEndTime" required>
+
+                <label for="describeIssue">Describe the Issue:</label>
+                <textarea id="describeIssue" name="describeIssue" rows="4" required></textarea>
+
+                <label for="issueStatus">Issue Status:</label>
+                <select id="issueStatus" name="issueStatus" required>
+                    <option value="Pending">Pending</option>
+                    <option value="Resolved">Resolved</option>
+                </select>
+
+                <button type="submit">Submit Issue</button>
+            </form>
+        </section>
+
+        <section>
+            <h2>Previous Reported Issues</h2>
+            <table id="storageIssuesTable" border="1">
+                <thead>
+                    <tr>
+                        <th>Batch ID</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Issue</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <script>
+
+        document.getElementById('reportStorageIssueForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+
+            try {
+                const response = await fetch('../backend/submit_storage_issue.php', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const result = await response.json();
+                alert(result.message || 'Issue submitted successfully');
+                if (result.success) {
+                    this.reset();
+                    fetchStorageIssues();
+                }
+            } catch (error) {
+                console.error('Error submitting issue:', error);
+                alert('An error occurred while submitting the issue.');
+            }
+        });
+
+
+        async function fetchStorageIssues() {
+            try {
+                const response = await fetch('../backend/fetch_storage_issues.php');
+                const data = await response.json();
+
+                const tableBody = document.querySelector('#storageIssuesTable tbody');
+                tableBody.innerHTML = ''; 
+
+                if (data.error) {
+                    alert(data.error); 
+                    return;
+                }
+
+                data.forEach(issue => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${issue.batchID}</td>
+                        <td>${issue.issueFromTime}</td>
+                        <td>${issue.issueToTime}</td>
+                        <td>${issue.issueProblem}</td>
+                        <td>${issue.issueStatus}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching storage issues:', error);
+                alert('An error occurred while fetching storage issues.');
+            }
+        }
+
+
+        window.onload = fetchStorageIssues;
+    </script>
+</body>
+</html>
