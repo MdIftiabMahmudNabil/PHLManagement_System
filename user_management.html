@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    <link rel="stylesheet" href="../CSS/styles.css">
+</head>
+<body>
+    <header>
+        <h1>User Management</h1>
+    </header>
+
+    <nav>
+        <a href="../frontend/system_admin.html">Home</a>
+        <a href="user_management.html">User Management</a>
+        <a href="../frontend/system_monitoring.html">System Monitoring</a>
+        <a href="../frontend/audit_logs.html">Sensor Logs</a>
+        <a href="login.html">Log Out</a>
+    </nav>
+
+    <div class="container">
+        <h2>Add New User</h2>
+        <form id="user-form">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            <label for="user-type">User Type:</label>
+            <select id="user-type" name="user-type" required>
+                <option value="" disabled selected>Select User Type</option>
+                <option value="Agricultural Officer">Agricultural Officer</option>
+                <option value="Transport Manager">Transport Manager</option>
+                <option value="Storage Manager">Storage Manager</option>
+                <option value="Shipment Manager">Shipment Manager</option>
+                <option value="Factory Manager">Factory Manager</option>
+                <option value="Retail Shop Owner">Retail Shop Owner</option>
+            </select>
+            <label for="phone">Phone:</label>
+            <input type="tel" id="phone" name="phone" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <label for="city">City:</label>
+            <input type="text" id="city" name="city" required>
+            <label for="division">Division:</label>
+            <input type="text" id="division" name="division" required>
+            <label for="zip-code">Zip Code:</label>
+            <input type="text" id="zip-code" name="zip-code" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <input type="submit" value="Submit">
+        </form>
+
+        <h2>View Users</h2>
+        <table id="user-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>User Type</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>City</th>
+                    <th>Division</th>
+                    <th>Zip Code</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+
+<div id="edit-modal" style="display: none;">
+    <h2>Edit User</h2>
+    <form id="edit-form">
+        <input type="hidden" id="edit-id" name="id">
+
+        <label for="edit-name">Name:</label>
+        <input type="text" id="edit-name" name="name" required>
+
+        <label for="edit-user-type">User Type:</label>
+        <select id="edit-user-type" name="user_type" required>
+            <option value="Administrator">Administrator</option>
+            <option value="Agricultural Officer">Agricultural Officer</option>
+            <option value="Storage Manager">Storage Manager</option>
+            <option value="Transport Manager">Transport Manager</option>
+            <option value="Factory Manager">Factory Manager</option>
+            <option value="Shipment Manager">Shipment Manager</option>
+            <option value="Retail Shop Owner">Retail Shop Owner</option>
+            <option value="System Admin">System Admin</option>
+        </select>
+
+        <label for="edit-phone">Phone:</label>
+        <input type="tel" id="edit-phone" name="phone" required>
+
+        <label for="edit-email">Email:</label>
+        <input type="email" id="edit-email" name="email" required>
+
+        <label for="edit-city">City:</label>
+        <input type="text" id="edit-city" name="city" required>
+
+        <label for="edit-division">Division:</label>
+        <input type="text" id="edit-division" name="division" required>
+
+        <label for="edit-zip-code">Zip Code:</label>
+        <input type="text" id="edit-zip-code" name="zip-code" required>
+
+        <label for="edit-password">Password:</label>
+        <input type="password" id="edit-password" name="password">
+
+        <button type="button" id="cancel-edit">Cancel</button>
+        <input type="submit" value="Update">
+    </form>
+</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('read_users.php')
+                .then(response => response.text())
+                .then(data => {
+                    document.querySelector('#user-table tbody').innerHTML = data;
+                });
+        });
+
+        document.querySelector('#user-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            fetch('create_user.php', {
+                method: 'POST',
+                body: new FormData(this),
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+                location.reload();
+            });
+        });
+
+        document.querySelector('#user-table').addEventListener('click', function (e) {
+            if (e.target.classList.contains('delete-btn')) {
+                const id = e.target.getAttribute('data-id');
+                fetch('delete_user.php', {
+                    method: 'POST',
+                    body: new URLSearchParams({ id }),
+                })
+                .then(response => response.text())
+                .then(data => {
+                    alert(data);
+                    location.reload();
+                });
+            }
+        });
+
+        document.querySelector('#user-table').addEventListener('click', function (e) {
+            if (e.target.classList.contains('update-btn')) {
+                const id = e.target.getAttribute('data-id');
+                const row = e.target.closest('tr');
+                document.querySelector('#edit-id').value = id;
+                document.querySelector('#edit-name').value = row.cells[0].innerText;
+                document.querySelector('#edit-phone').value = row.cells[2].innerText;
+                document.querySelector('#edit-email').value = row.cells[3].innerText;
+                document.querySelector('#edit-city').value = row.cells[4].innerText;
+                document.querySelector('#edit-division').value = row.cells[5].innerText;
+                document.querySelector('#edit-zip-code').value = row.cells[6].innerText;
+                document.querySelector('#edit-modal').style.display = 'block';
+            }
+        });
+
+        document.querySelector('#edit-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            fetch('update_user.php', {
+                method: 'POST',
+                body: new FormData(this),
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+                document.querySelector('#edit-modal').style.display = 'none';
+                location.reload();
+            });
+        });
+
+        document.querySelector('#cancel-edit').addEventListener('click', function () {
+            document.querySelector('#edit-modal').style.display = 'none';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inspect Batch</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Inspect Batch</h1>
+    </header>
+    <nav>
+        <a href="agricultural_officer.html">Home</a>
+        <a href="inspect_batch.html">Inspect Harvest Batch</a>
+        <a href="list_of_farms.html">List of Farms</a>
+        <a href="generate_report.html">Generate Report</a>
+        <a href="../backend/login.html">Log Out</a>
+    </nav>
+
+    <div class="container">
+
+        <h2>Add New Inspection Remark</h2>
+        <form id="inspection-form">
+            <label for="batchID">Batch ID:</label>
+            <input type="text" id="batchID" name="batchID" required>
+
+            <label for="remarks">Remarks:</label>
+            <textarea id="remarks" name="remarks" rows="4" required></textarea>
+
+            <button type="submit">Add Remark</button>
+        </form>
+
+
+        <h2>Previous Remarks</h2>
+        <table id="remarks-table">
+            <thead>
+                <tr>
+                    <th>Batch ID</th>
+                    <th>Inspection Remarks</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+  
+        document.getElementById('inspection-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const batchID = document.getElementById('batchID').value;
+            const remarks = document.getElementById('remarks').value;
+
+            try {
+                const response = await fetch('../backend/add_batch_inspection.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `batchID=${encodeURIComponent(batchID)}&remarks=${encodeURIComponent(remarks)}`,
+                });
+
+                const result = await response.text();
+                alert(result); 
+
+
+                document.getElementById('batchID').value = '';
+                document.getElementById('remarks').value = '';
+
+
+                fetchRemarks();
+            } catch (error) {
+                console.error('Error adding remark:', error);
+            }
+        });
+
+
+        async function fetchRemarks() {
+            try {
+                const response = await fetch('../backend/fetch_batch_inspection.php');
+                const data = await response.json();
+
+                const tableBody = document.querySelector('#remarks-table tbody');
+                tableBody.innerHTML = ''; 
+
+                data.forEach(remark => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${remark.batchID}</td>
+                        <td>${remark.inspectionRemarks}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching remarks:', error);
+            }
+        }
+
+
+        window.onload = fetchRemarks;
+    </script>
+</body>
+</html>

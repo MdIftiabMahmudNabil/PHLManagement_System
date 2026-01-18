@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Transportation Issue</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Report Transportation Issue</h1>
+    </header>
+
+    <nav>
+        <a href="transport_manager.html">Home</a>
+        <a href="../backend/assign_track.php">Reassign & Track Vehicles</a>
+        <a href="report_issue.html">Report Issue</a>
+        <a href="view_loss_report.html">View Loss Report</a>
+        <a href="../backend/login.html">Log Out</a>
+    </nav>
+
+
+    <div class="container">
+        <section>
+            <h2>Report Issue</h2>
+            <form id="reportTransportationIssueForm">
+                <label for="batchID">Batch ID:</label>
+                <input type="text" id="batchID" name="batchID" required>
+
+                <label for="issueStartTime">Issue Start Time:</label>
+                <input type="datetime-local" id="issueStartTime" name="issueStartTime" required>
+
+                <label for="issueEndTime">Issue End Time:</label>
+                <input type="datetime-local" id="issueEndTime" name="issueEndTime" required>
+
+                <label for="describeIssue">Describe the Issue:</label>
+                <textarea id="describeIssue" name="describeIssue" rows="4" required></textarea>
+
+                <label for="issueStatus">Issue Status:</label>
+                <select id="issueStatus" name="issueStatus" required>
+                    <option value="Pending">Pending</option>
+                    <option value="Resolved">Resolved</option>
+                </select>
+
+                <button type="submit">Submit Issue</button>
+            </form>
+        </section>
+
+        <section>
+            <h2>Previous Reported Issues</h2>
+            <table id="TransportationIssuesTable" border="1">
+                <thead>
+                    <tr>
+                        <th>Batch ID</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Issue</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <script>
+
+        document.getElementById('reportTransportationIssueForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+
+            try {
+                const response = await fetch('../backend/submit_Transportation_issue.php', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const result = await response.json();
+                alert(result.message || 'Issue submitted successfully');
+                if (result.success) {
+                    this.reset();
+                    fetchTransportationIssues();
+                }
+            } catch (error) {
+                console.error('Error submitting issue:', error);
+                alert('An error occurred while submitting the issue.');
+            }
+        });
+
+
+        async function fetchTransportationIssues() {
+            try {
+                const response = await fetch('../backend/fetch_Transportation_issues.php');
+                const data = await response.json();
+
+                const tableBody = document.querySelector('#TransportationIssuesTable tbody');
+                tableBody.innerHTML = '';
+
+                if (data.error) {
+                    alert(data.error); 
+                    return;
+                }
+
+                data.forEach(issue => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${issue.batchID}</td>
+                        <td>${issue.issueFromTime}</td>
+                        <td>${issue.issueToTime}</td>
+                        <td>${issue.issueProblem}</td>
+                        <td>${issue.issueStatus}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching Transportation issues:', error);
+                alert('An error occurred while fetching Transportation issues.');
+            }
+        }
+
+
+        window.onload = fetchTransportationIssues;
+    </script>
+</body>
+</html>
