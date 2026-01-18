@@ -1,0 +1,8 @@
+# Ignore large video files
+*.mkv
+*.mp4
+*.avi
+*.mov
+
+# Project Materials - large files
+Project Materials/Project Demonstration Video.mkv
